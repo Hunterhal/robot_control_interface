@@ -3,65 +3,44 @@ import time
 import sys 
 import socket
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QListWidget, QGridLayout, QLabel, QLineEdit
+from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QListWidget, QGridLayout, QLabel, QLineEdit, QRadioButton
 from PyQt5.QtCore import QTimer, QDateTime
+
+from user_interface import Ui_Dialog
 
 class WinForm(QWidget):
     def __init__(self, parent=None):
         super(WinForm, self).__init__(parent)
         self.setWindowTitle("Robot Control Interface")
 
-        self.setFixedWidth(400)
-        self.setFixedHeight(400)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
 
-        self.listFile=QListWidget()
-        self.label=QLabel('Label')
-
-        self.labelXAxis=QLabel('XAxis:')
-        self.textXAxis = QLineEdit(self)
-        self.labelYAxis=QLabel('YAxis:')
-        self.textYAxis = QLineEdit(self)
-        self.labelZRot=QLabel('ZRot:')
-        self.textZRot = QLineEdit(self)
-        self.labelZAxis=QLabel('ZAxis:')
-        self.textZAxis = QLineEdit(self)
-
-        self.startBtn=QPushButton('Start')
-        self.endBtn=QPushButton('Stop')
-
-        layout=QGridLayout()
-        layout.addWidget(self.label,0,0,1,2)
-        layout.addWidget(self.startBtn,1,0)
-        layout.addWidget(self.endBtn,1,1)
-
-        layout.addWidget(self.labelXAxis,2,0)
-        layout.addWidget(self.textXAxis,2,1)
-        layout.addWidget(self.labelYAxis,3,0)
-        layout.addWidget(self.textYAxis,3,1)
-        layout.addWidget(self.labelZRot,4,0)
-        layout.addWidget(self.textZRot,4,1)
-        layout.addWidget(self.labelZAxis,5,0)
-        layout.addWidget(self.textZAxis,5,1)
+        self.checkBtns = []
+        self.checkBtns.append(self.ui.checkBtn_1)
+        self.checkBtns.append(self.ui.checkBtn_2)
+        self.checkBtns.append(self.ui.checkBtn_3)
+        self.checkBtns.append(self.ui.checkBtn_4)
+        self.checkBtns.append(self.ui.checkBtn_5)
+        self.checkBtns.append(self.ui.checkBtn_6)
+        self.checkBtns.append(self.ui.checkBtn_7)
+        self.checkBtns.append(self.ui.checkBtn_8)
+        self.checkBtns.append(self.ui.checkBtn_9)
+        self.checkBtns.append(self.ui.checkBtn_10)
+        self.checkBtns.append(self.ui.checkBtn_11)
+        self.checkBtns.append(self.ui.checkBtn_12)
 
         self.timer=QTimer()
         self.timer.timeout.connect(self.showTime)
 
-        self.startBtn.clicked.connect(self.startTimer)
-        self.endBtn.clicked.connect(self.endTimer)
-
-        #Initialize UDP Socket
-        self.UDP_IP = "192.168.0.101"
-        self.UDP_PORT = 5005
-        self.sock = socket.socket(socket.AF_INET, # Internet
-                     socket.SOCK_DGRAM) # UDP
+        self.ui.pushBtnStart.clicked.connect(self.startTimer)
+        self.ui.pushBtnStop.clicked.connect(self.endTimer)
 
         #Intialize Joystick
         pygame.display.init()
         pygame.joystick.init()
         self.controller = pygame.joystick.Joystick(0)
         self.controller.init()
-
-        self.setLayout(layout)
 
     def showTime(self):
         # Get next pygame event
@@ -70,41 +49,50 @@ class WinForm(QWidget):
 
         xAxis = self.controller.get_axis(1)
         send_string += '%+2.2f,' % xAxis
-        self.textXAxis.setText('%+2.2f,' % xAxis)
+        self.ui.textXAxis.setText('%+2.2f' % xAxis)
 
         yAxis = self.controller.get_axis(0)
         send_string += '%+2.2f,' % yAxis
-        self.textYAxis.setText('%+2.2f,' % yAxis)
+        self.ui.textYAxis.setText('%+2.2f' % yAxis)
 
         zAxis = self.controller.get_axis(2)
         send_string += '%+2.2f,' % zAxis
-        self.textZAxis.setText('%+2.2f,' % zAxis)
+        self.ui.textZAxis.setText('%+2.2f' % zAxis)
 
         zRot = self.controller.get_axis(3)
         send_string += '%+2.2f,' % zRot
-        self.textZRot.setText('%+2.2f,' % zRot)
+        self.ui.textZRot.setText('%+2.2f' % zRot)
 
         for k in range(self.controller.get_numbuttons()):
             send_string += '%d,' % self.controller.get_button(k)
+            self.checkBtns[k].setChecked(bool(self.controller.get_button(k)))
         for k in range(self.controller.get_numhats()):
             send_string += str(self.controller.get_hat(k)) + ","
+            self.ui.textPov.setText(str(self.controller.get_hat(k)))
+
+        self.ui.textPacket.setText(send_string)
 
         send_string += "*"
         while len(send_string) != 100:
             send_string += "*"
         
-        self.label.setText(send_string)
         self.sock.sendto(str.encode(send_string), (self.UDP_IP, self.UDP_PORT))
 
     def startTimer(self):
+        #Initialize UDP Socket
+        self.UDP_IP = self.ui.textIP.text()
+        self.UDP_PORT = int(self.ui.textPort.text())
+        self.sock = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+
         self.timer.start(50)
-        self.startBtn.setEnabled(False)
-        self.endBtn.setEnabled(True)
+        self.ui.pushBtnStart.setEnabled(False)
+        self.ui.pushBtnStop.setEnabled(True)
 
     def endTimer(self):
         self.timer.stop()
-        self.startBtn.setEnabled(True)
-        self.endBtn.setEnabled(False)
+        self.ui.pushBtnStart.setEnabled(True)
+        self.ui.pushBtnStop.setEnabled(False)
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)
