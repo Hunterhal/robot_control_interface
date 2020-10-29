@@ -337,7 +337,7 @@
      <string>Btn6</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBtn_7">
+   <widget class="QCheckBox" name="checkBtn_12">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -373,7 +373,7 @@
      <string>Btn8</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBtn_9">
+   <widget class="QCheckBox" name="checkBtn_10">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -391,7 +391,7 @@
      <string>Btn10</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBtn_10">
+   <widget class="QCheckBox" name="checkBtn_11">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -409,7 +409,7 @@
      <string>Btn11</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBtn_11">
+   <widget class="QCheckBox" name="checkBtn_7">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -427,7 +427,7 @@
      <string>Btn7</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBtn_12">
+   <widget class="QCheckBox" name="checkBtn_9">
     <property name="geometry">
      <rect>
       <x>260</x>

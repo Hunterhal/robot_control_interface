@@ -67,8 +67,10 @@ class WinForm(QWidget):
             send_string += '%d,' % self.controller.get_button(k)
             self.checkBtns[k].setChecked(bool(self.controller.get_button(k)))
         for k in range(self.controller.get_numhats()):
-            send_string += str(self.controller.get_hat(k)) + ","
-            self.ui.textPov.setText(str(self.controller.get_hat(k)))
+            pov = self.controller.get_hat(k)
+            pov_str = str(pov[0]) + "," + str(pov[1]) 
+            self.ui.textPov.setText(pov_str)
+            send_string += pov_str + ","
 
         self.ui.textPacket.setText(send_string)
 
